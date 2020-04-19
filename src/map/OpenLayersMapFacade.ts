@@ -1,26 +1,35 @@
+import 'ol/ol.css';
 import { MapFacade } from "./MapFacade";
 import { Map, View } from 'ol';
 import TileLayer from 'ol/layer/Tile';
-import OSM from 'ol/source/OSM';
+import { Image as ImageLayer } from 'ol/layer';
+import { OSM, ImageArcGISRest } from 'ol/source';
+
+function mapUrl() {
+  return 'https://sampleserver1.arcgisonline.com/ArcGIS/rest/services/' +
+    'Specialty/ESRI_StateCityHighway_USA/MapServer';
+}
 
 export function renderMap(selector: string): MapFacade {
-  console.log(`rendering map at ${selector}`);
-  const source = new OSM();
-  console.log({ source });
-
   const map = new Map({
     target: selector,
     layers: [
       new TileLayer({
-        source
+        source: new OSM()
+      }),
+      new ImageLayer({
+        source: new ImageArcGISRest({
+          ratio: 1,
+          params: {},
+          url: mapUrl()
+        })
       })
     ],
     view: new View({
-      center: [0, 0],
-      zoom: 0
+      center: [-10997148, 4569099],
+      zoom: 4
     })
   });
-  console.log({ map });
   return new OpenLayersMapFacade(map);
 }
 
